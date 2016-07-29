@@ -1116,12 +1116,6 @@ void scrollImage(String strIn, int del){
 
 //return a one or 0 showing if a particular pixel of a character is an on or off LED
 int getCharPixel(char thisChar, int down, int left){
-    //If the character is out of range by being, make it a space
-    //TODO THIS SHOULDNT BE NEEDED BC OF SANITIZE STRING
-    /*if (thisChar < 32){
-        thisChar = ' ';
-    }*/
-    
     String row = String(all[((thisChar-32)*8)+down], BIN);
     
     int rowLength = row.length();

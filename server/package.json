@@ -1,0 +1,29 @@
+{
+  "name": "textsashChapter",
+  "version": "1.0.0",
+  "description": "A bot to find tweets to display",
+  "main": "bot.js",
+  "dependencies": {
+    "nedb": "^1.1.2",
+    "q": "^1.4.0",
+    "restler": "^3.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gelicia/textSashChapter"
+  },
+  "keywords": [
+    "particle",
+    "twilio"
+  ],
+  "author": "Kristina Durivage",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gelicia/textSashChapter/issues"
+  },
+  "homepage": "https://github.com/gelicia/textSashChapter"
+}

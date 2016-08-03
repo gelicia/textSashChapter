@@ -11,6 +11,9 @@ var displayedTexts_db = new Datastore({filename: './displayedTexts.db', autoload
 //how many times it will try to send everything to the particle before giving up
  var particleErrorThreshhold = 3;
 
+//how many days of running until the cleanup runs
+ var dbCleanupDays = 3;
+
 var twilioClient = require('twilio')(twilioConfig.accountSid, twilioConfig.authToken); 
 
 function queueTexts() {
@@ -193,13 +196,13 @@ function sendMessage(adminFlag, messageData, rootMsg){
 //Make this a process to go off every so often if this program ends up staying online longterm
 function dbCleanup(){
 	var now = new Date();
-	displayed_db.createReadStream()
+	displayedTexts_db.createReadStream()
 	.on('data', function (data) {
 		var tweetDate = new Date(data.value);
 		if (now - tweetDate > 1000*60*60*24*dbCleanupDays){
-			displayed_db.del(data.key);
+			displayedTexts_db.del(data.key);
 		}
 	});
 }
 
-dbCleanup();
+setInterval(dbCleanup, 1000*60*60*24*dbCleanupDays);

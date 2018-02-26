@@ -1,6 +1,7 @@
 var rest = require('restler');
 var Datastore = require('nedb');
 var q = require('q');
+var Twilio = require('twilio');
 
 var particleConfig = require('./particleConfig.js');
 var twilioConfig = require('./twilioConfig.js');
@@ -14,31 +15,24 @@ var displayedTexts_db = new Datastore({filename: './displayedTexts.db', autoload
 //how many days of running until the cleanup runs
  var dbCleanupDays = 3;
 
-var twilioClient = require('twilio')(twilioConfig.accountSid, twilioConfig.authToken); 
+var twilioClient = new Twilio(twilioConfig.accountSid, twilioConfig.authToken);
 
 function queueTexts() {
-	//todo go back two days
-	twilioClient.messages.list({'DateSent>':'2015-07-18'},     
-		function(err, data) { 
-			if (err !== null){
-				console.log(err);
-			}
-			else {
-				data.messages.forEach(function(message) { 
-					if (message.direction == 'inbound'){
-						var isDisplayedPromise = isAlreadyDisplayed(message);
-						isDisplayedPromise.done(function(result){
-							if(result.toQueue){//text not found! queue it up!
-								textQueue_db.insert({id: message.sid, message:message.body, created_at: new Date(message.date_sent)});
-								console.log("queueing ", message.body);
-							}
-						});
-					}
-				}); 
-			}
-		}
-	);
-		
+	var listPromise = twilioClient.messages.list({'dateSentAfter': '2018-01-01'});
+
+	listPromise.then(function(messages){
+        messages.forEach(function(message) {
+            if (message.direction == 'inbound'){
+                var isDisplayedPromise = isAlreadyDisplayed(message);
+                isDisplayedPromise.done(function(result){
+                    if(result.toQueue){//text not found! queue it up!
+                        textQueue_db.insert({id: message.sid, message:message.body, created_at: new Date(message.date_sent)});
+                        console.log("queueing ", message.body);
+                    }
+                });
+            }
+        });
+    });
 }
 
 function isTextQueued(textData){
